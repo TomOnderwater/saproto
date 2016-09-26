@@ -25,9 +25,11 @@
                 $("#connecting").hide(0);
                 $("#connected").show(0);
                 if(token) remote.emit("token", token);
-
-                focusOnPin();
             });
+
+            setTimeout(function() {
+                focusOnPin();
+            }, 200);
 
             $('#login').click(function(){
                 focusOnPin();
