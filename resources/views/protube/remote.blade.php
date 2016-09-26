@@ -1,5 +1,18 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no"/>
+
+    <meta name="theme-color" content="#C1FF00">
+
+    <link rel="shortcut icon" href="{{ asset('images/favicons/favicon'.mt_rand(1, 4).'.png') }}"/>
+
+    <title>S.A. Proto | Protube Remote</title>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 
@@ -155,27 +168,30 @@
         }
     </script>
 
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    @include('website.layouts.assets.stylesheets')
+
+    @section('stylesheet')
+        @include('website.layouts.assets.customcss')
+    @show
 
     <style>
         @import url("https://fonts.googleapis.com/css?family=Roboto:400,400italic,500,500italic,700,700italic,900,900italic,300italic,300,100italic,100");
 
         body {
-            background-color: #111;
+            background-color: #333;
             color: #fff;
             margin: 0;
             padding: 0;
-
-            font-family: 'Roboto', sans-serif;
         }
 
         input[type=number] {
-            padding: 10px;
-            border: 1px solid #ddd;
-            width: 50px;
-            height: 50px;
+            padding: 1rem;
+            display: inline-block;
+            width: 40px;
+            height: 40px;
             text-align: center;
-            font-size: 30px;
+            font-size: 1.5rem;
+            margin: 1rem .5rem;
         }
 
         input[type=number]::-webkit-outer-spin-button,
@@ -212,13 +228,13 @@
           }
         }
 
-        input {
+        /*input {
             background-color: #000;
             color: #fff;
             border: #c3ff00 1px solid;
             font-size: 16px;
             padding: 20px;
-        }
+        }*/
 
         button {
             background-color: #000;
@@ -249,16 +265,22 @@
             height: 100px;
         }
 
-        #login {
+        .container--login {
             display: table;
             position: absolute;
+            overflow: hidden;
             height: 100%;
             width: 100%;
+        }
+
+        .container--loggedin {
+            overflow: hidden;
         }
 
         .input-box {
             display: table-cell;
             vertical-align: middle;
+            text-align: center;
         }
 
         #loggedIn {
@@ -268,7 +290,6 @@
         #results {
             position: absolute;
             top: 75px;
-
             width: 100%;
         }
 
@@ -278,6 +299,21 @@
             margin-bottom: 10px;
             cursor: pointer;
             height: 180px;
+        }
+
+        .input-group {
+            width: 100%;
+        }
+
+        .currently-playing {
+            position: fixed;
+            padding: 1rem;
+            background-color: #7FBA00;
+            color: white;
+            width: 100%;
+            left: 0;
+            right: 0;
+            bottom: 0;
         }
 
         .result > div {
@@ -321,8 +357,6 @@
             background-color: #444;
         }
     </style>
-
-    <title>Remote</title>
 </head>
 
 <body>
@@ -332,31 +366,35 @@
 </div>
 
 <div id="connected">
-    <div id="login">
+    <div id="login" class="container--login">
         <section class="input-box">
             <form id="pin-input">
-                <input name="pin-a" class="pin pin--a" type="number" pattern="[0-9]*" inputmode="numeric" maxlength="1" />
-                <input name="pin-b" class="pin pin--b" type="number" pattern="[0-9]*" inputmode="numeric" maxlength="1" />
-                <input name="pin-c" class="pin pin--c" type="number" pattern="[0-9]*" inputmode="numeric" maxlength="1" />
+                <input name="pin-a" class="form-control pin pin--a" type="number" pattern="[0-9]*" inputmode="numeric" maxlength="1" />
+                <input name="pin-b" class="form-control pin pin--b" type="number" pattern="[0-9]*" inputmode="numeric" maxlength="1" />
+                <input name="pin-c" class="form-control pin pin--c" type="number" pattern="[0-9]*" inputmode="numeric" maxlength="1" />
             </form>
+            <span>Enter Protube pin.</span>
         </section>
 
     </div>
 
-    <div id="loggedIn">
-        <div id="search">
-            <form action="" method="get">
-                <table width="100%">
-                    <tr>
-                        <td><input type="text" id="searchBox" placeholder="Search" autocomplete="off" style="width: 100%;" /></td>
-                        <td style="width: 130px; text-align: right;"><label for="showVideo">Show video</label> <input type="checkbox" checked="checked" id="showVideo" /></td>
-                    </tr>
-                </table>
-            </form>
-            <div id="results">
-                <!-- Filled by JS -->
+    <div id="loggedIn" class="container container--loggedin">
+        <form action="" method="get" class="navbar-form" role="search">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search" name="searchBox" id="searchBox">
+                <div class="input-group-btn">
+                    <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                </div>
             </div>
+        </form>
+
+        <div id="results">
+            <!-- Filled by JS -->
         </div>
+
+        <footer class="currently-playing">
+            <div class="container">Currently Playing</div>
+        </footer>
     </div>
 </div>
 
