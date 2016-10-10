@@ -10,6 +10,8 @@ use Proto\Models\Email;
 use Proto\Models\EmailList;
 use Proto\Models\StorageEntry;
 use Proto\Models\Event;
+use Proto\Models\User;
+use Proto\Models\EmailListSubscription;
 
 use Auth;
 use Redirect;
@@ -72,12 +74,21 @@ class EmailController extends Controller
     public function show($id)
     {
         $email = Email::findOrFail($id);
-        return view('emails.manualemail', ['body' => $email->parseBodyFor(Auth::user()), 'attachments' => $email->attachments, 'destination' => $email->destinationForBody()]);
+        return view('emails.manualemail', [
+            'body' => $email->parseBodyFor(Auth::user()),
+            'attachments' => $email->attachments,
+            'destination' => $email->destinationForBody(),
+            'user_id' => Auth::user()->id
+        ]);
     }
 
     public function newsletterPreview()
     {
-        return view('emails.newsletter', ['user' => Auth::user(), 'events' => Event::getEventsForNewsletter()]);
+        return view('emails.newsletter', [
+            'user' => Auth::user(),
+            'list' => EmailList::find(config('proto.weeklynewsletter')),
+            'events' => Event::getEventsForNewsletter()
+        ]);
     }
 
     /**
@@ -192,6 +203,21 @@ class EmailController extends Controller
 
         $request->session()->flash('flash_message', 'Attachment deleted.');
         return Redirect::route('email::edit', ['id' => $email->id]);
+    }
+
+    public function unsubscribeLink(Request $request, $hash)
+    {
+        $data = EmailList::parseUnsubscribeHash($hash);
+        $user = User::findOrFail($data->user);
+        $list = EmailList::findOrFail($data->list);
+        $sub = EmailListSubscription::where('user_id', $user->id)->where('list_id', $list->id)->first();
+        if ($sub != null) {
+            $request->session()->flash('flash_message', $user->name . ' has been unsubscribed from ' . $list->name);
+            $sub->delete();
+        } else {
+            $request->session()->flash('flash_message', $user->name . ' was already unsubscribed from ' . $list->name);
+        }
+        return Redirect::route('homepage');
     }
 
     /**

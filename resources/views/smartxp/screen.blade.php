@@ -9,7 +9,7 @@
 
     <link rel="shortcut icon" href="{{ asset('images/favicons/favicon'.mt_rand(1, 4).'.png') }}"/>
 
-    <title>SmartXp Screen v3</title>
+    <title>SmartXP Screen v3</title>
 
     @include('website.layouts.assets.stylesheets')
 
@@ -141,6 +141,10 @@
 
         .activity.past {
             opacity: 0.5;
+        }
+
+        .activity.current {
+            color: #c1ff00;
         }
 
         .busentry {
@@ -336,12 +340,12 @@
                         var start = moment.unix(data[i].start);
                         var end = moment.unix(data[i].end);
                         var time = start.format("HH:mm") + ' - ' + end.format("HH:mm");
-                        $("#timetable").append('<div class="activity ' + (data[i].over ? "past" : "") + '">' + time + ' (' + data[i].type + ') @ ' + data[i].place + '<br><strong>' + data[i].title + '</strong></div>');
+                        $("#timetable").append('<div class="activity ' + (data[i].current ? "current" : (data[i].over ? "past" : "")) + '">' + time + ' (' + data[i].type + ') @ ' + data[i].place + '<br><strong>' + data[i].title + '</strong></div>');
                     }
                 } else {
                     $("#timetable").html('<div class="notice">No lectures today!</div>');
                 }
-                setTimeout(updateTimetable, 300000);
+                setTimeout(updateTimetable, 60000);
             },
             error: function () {
                 $("#timetable").html('<div class="notice">Something went wrong during retrieval...</div>');
@@ -367,16 +371,16 @@
                         } else {
                             var time = start.format("DD-MM, HH:mm") + ' - ' + end.format("DD-MM, HH:mm");
                         }
-                        $("#activities").append('<div class="activity ' + (data[i].over ? "past" : "") + '">' + time + ' @ ' + data[i].location + '<br><strong>' + data[i].title + '</strong></div>');
+                        $("#activities").append('<div class="activity ' + (data[i].current ? "current" : (data[i].over ? "past" : "")) + '">' + time + ' @ ' + data[i].location + '<br><strong>' + data[i].title + '</strong></div>');
                     }
                 } else {
                     $("#activities").html('<div class="notice">No upcoming activities!</div>');
                 }
-                setTimeout(updateTimetable, 300000);
+                setTimeout(updateActivities, 60000);
             },
             error: function () {
                 $("#activities").html('<div class="notice">Something went wrong during retrieval...</div>');
-                setTimeout(updateTimetable, 5000);
+                setTimeout(updateActivities, 5000);
             }
         })
     }

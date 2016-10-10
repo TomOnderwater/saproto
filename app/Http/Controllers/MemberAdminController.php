@@ -38,7 +38,7 @@ class MemberAdminController extends Controller
         $search = $request->input('query');
 
         if ($search) {
-            $users = User::where('name_first', 'LIKE', '%' . $search . '%')->orWhere('name_last', 'LIKE', '%' . $search . '%')->orWhere('name_initials', 'LIKE', '%' . $search . '%')->orWhere('email', 'LIKE', '%' . $search . '%')->orWhere('utwente_username', 'LIKE', '%' . $search . '%')->paginate(20);
+            $users = User::where('name', 'LIKE', '%' . $search . '%')->orWhere('calling_name', 'LIKE', '%' . $search . '%')->orWhere('email', 'LIKE', '%' . $search . '%')->orWhere('utwente_username', 'LIKE', '%' . $search . '%')->paginate(20);
         } else {
             $users = User::paginate(20);
         }
@@ -101,7 +101,7 @@ class MemberAdminController extends Controller
     {
         $user = User::findOrFail($id);
 
-        if (!($user->primary_address() && $user->bank)) {
+        if (!($user->address && $user->bank)) {
             Session::flash("flash_message", "This user really needs a bank account and address. Don't bypass the system!");
             return Redirect::back();
         }
@@ -156,7 +156,7 @@ class MemberAdminController extends Controller
 
         $user = User::findOrFail($id);
 
-        if ($user->address->count() === 0) {
+        if ($user->address === null) {
             Session::flash("flash_message", "This user has no address!");
             return Redirect::back();
         }

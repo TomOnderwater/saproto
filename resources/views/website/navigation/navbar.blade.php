@@ -58,7 +58,7 @@
                         <li><a href="{{ route("committee::list") }}">Committees</a></li>
                         <li><a href="{{ route("event::list") }}">Calendar</a></li>
                         <li><a href="{{ route("photo::albums") }}">Photos</a></li>
-                        <li><a href="{{ route("protube::remote") }}">Protube</a></li>
+                        <li><a href="{{ route("protube.nl::remote") }}">ProTube</a></li>
                         @if (Auth::check() && Auth::user()->member)
                             <li><a href="{{ route("quotes::list") }}">Quote Corner</a></li>
                         @endif
@@ -109,11 +109,12 @@
                             <li><a href="{{ route("menu::list") }}">Menu</a></li>
                             <li><a href="{{ route("page::list") }}">Pages</a></li>
                             <li><a href="{{ route("email::admin") }}">Email</a></li>
+                            <li><a href="{{ route("achievement::list") }}">Achievements</a></li>
+                            <li><a href="{{ route("welcomeMessages::list") }}">Welcome Messages</a></li>
 
                             @if(Auth::user()->can('admin'))
                                 <li><a href="{{ route("alias::index") }}">Aliases</a></li>
                                 <li><a href="{{ route("authorization::overview") }}">Authorization</a></li>
-                                <li><a href="{{ route("achievement::list") }}">Achievements</a></li>
                             @endif
 
                             <li role="separator" class="divider"></li>
@@ -124,7 +125,7 @@
 
                             <li role="separator" class="divider"></li>
 
-                            <li><a class="navbar-title">Other Affairs ( ͡° ͜ʖ ͡°):</a></li>
+                            <li><a class="navbar-title">Internal Affairs:</a></li>
                             <li><a href="{{ route("pastries::list") }}">Pastries</a></li>
 
                             @if (Auth::user()->can("finadmin"))

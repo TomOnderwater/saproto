@@ -4,11 +4,22 @@ namespace Proto\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Proto\Http\Middleware\Member;
 use Proto\Http\Requests;
 use Proto\Http\Controllers\Controller;
 
 use PragmaRX\Google2FA\Google2FA;
 
+use Proto\Models\Achievement;
+use Proto\Models\AchievementOwnership;
+use Proto\Models\Address;
+use Proto\Models\Alias;
+use Proto\Models\Bank;
+use Proto\Models\EmailList;
+use Proto\Models\EmailListSubscription;
+use Proto\Models\Quote;
+use Proto\Models\RfidCard;
+use Proto\Models\StudyEntry;
 use Proto\Models\User;
 
 use Auth;
@@ -218,9 +229,8 @@ class AuthController extends Controller
 
         $this->validate($request, [
             'email' => 'required|email|unique:users',
-            'name_first' => 'required|string',
-            'name_last' => 'required|string',
-            'name_initials' => 'required|regex:(([A-Za-z]\.)+)',
+            'name' => 'required|string',
+            'calling_name' => 'required|string',
             'birthdate' => 'required|date_format:Y-m-d',
             'gender' => 'required|in:1,2,9',
             'nationality' => 'required|string',
@@ -245,6 +255,51 @@ class AuthController extends Controller
             $request->session()->flash('flash_message', 'Your account has been created. You will receive an e-mail with your password shortly.');
             return Redirect::route('homepage');
         }
+    }
+
+    public function deleteUser(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->id != Auth::id() && !Auth::user()->can('board')) {
+            abort(403);
+        }
+
+        Address::where('user_id', $user->id)->delete();
+        Bank::where('user_id', $user->id)->delete();
+        EmailListSubscription::where('user_id', $user->id)->delete();
+        AchievementOwnership::where('user_id', $user->id)->delete();
+        StudyEntry::where('user_id', $user->id)->forceDelete();
+        Member::where('user_id', $user->id)->forceDelete();
+        Alias::where('user_id', $user->id)->delete();
+        Quote::where('user_id', $user->id)->delete();
+        RfidCard::where('user_id', $user->id)->delete();
+
+        if ($user->photo) {
+            $user->photo->delete();
+        }
+
+        $user->password = null;
+        $user->remember_token = null;
+        $user->birthdate = null;
+        $user->gender = null;
+        $user->nationality = null;
+        $user->phone = null;
+        $user->website = null;
+        $user->utwente_username = null;
+        $user->tfa_totp_key = null;
+        $user->tfa_yubikey_identity = null;
+
+        $user->phone_visible = 0;
+        $user->address_visible = 0;
+        $user->receive_sms = 0;
+
+        $user->save();
+
+        $user->delete();
+
+        $request->session()->flash('flash_message', 'Your account has been deleted.');
+        return Redirect::route('homepage');
     }
 
 }
