@@ -56,12 +56,15 @@
                 location.reload();
             });
 
-            remote.on("queue", function(data) {
-                var queue = $("#queue");
-                queue.html("");
+            remote.on("ytInfo", function(data) {
+                console.log('info', data);
+            });
 
+            remote.on("queue", function(data) {
+                $("#playing-queue ul").html("");
                 for(var i in data) {
-                    queue.append('<img src="http://img.youtube.com/vi/' + data[i].id + '/0.jpg" />');
+                    var invisible = (data[i].showVideo ? '' : '<i class="fa fa-eye-slash" aria-hidden="true"></i>');
+                    $("#playing-queue ul").append(`<li><img src="http://img.youtube.com/vi/${data[i].id}/0.jpg" /><h1>${data[i].title}${invisible}</h1></li>`);
                 }
             });
 
@@ -253,12 +256,34 @@
             display: none;
         }
 
-        #queue {
+        .currently-playing ul {
+            position: relative;
+            padding: 0;
+            margin: 0;
+        }
+
+        .currently-playing ul li {
+            position: relative;
+            width: 180px;
+            height: 135px;
+            display: inline-block;
+            padding: 0;
+            margin: 0;
+        }
+
+        .currently-playing ul li h1 {
             position: absolute;
-            top: 0;
-            left: 0px;
-            right: 0px;
-            height: 100px;
+            top: 10px;
+            left: 10px;
+            width: 160px;
+            height: 115px;
+            overflow: hidden;
+            font-size: 16px;
+            font-weight: normal;
+            color: #fff;
+            text-shadow: #000 1px 1px;
+            margin: 0;
+            padding: 0;
         }
 
         #queue img {
@@ -392,8 +417,10 @@
             <!-- Filled by JS -->
         </div>
 
-        <footer class="currently-playing">
-            <div class="container">Currently Playing</div>
+        <footer id="playing-queue" class="currently-playing">
+            <ul>
+                <!-- Filled by JS -->
+            </ul>
         </footer>
     </div>
 </div>
