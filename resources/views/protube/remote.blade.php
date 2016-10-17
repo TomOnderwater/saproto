@@ -26,7 +26,7 @@
                 dataType: "jsonp",
                 success: function(_token) {
 
-                    token = _token;
+                    token = _token.token;
 
                     var errorElement = $("body");
 
